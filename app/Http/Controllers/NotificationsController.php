@@ -4,7 +4,9 @@ use App\Notification;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Redirect;
+//use Illuminate\Http\Request;
 
 class NotificationsController extends Controller {
 
@@ -27,6 +29,7 @@ class NotificationsController extends Controller {
 	public function create()
 	{
 		//
+		return view('notifications.create');
 	}
 
 	/**
@@ -37,7 +40,20 @@ class NotificationsController extends Controller {
 	public function store()
 	{
 		//
+		$notification = new Notification;
+        
+        if(Request::has('text')) {
+            $notification->text = Request::input('text');
+        } else {
+            return "Please provide text.";
+        }
+        
+        $notification->save();
+        
+        return Redirect::to('admin');
 	}
+
+    // The below functions should not be needed and will not be implemented
 
 	/**
 	 * Display the specified resource.

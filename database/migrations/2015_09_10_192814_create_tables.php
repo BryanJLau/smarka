@@ -22,6 +22,8 @@ class CreateItemAndOrderTables extends Migration
             $table->boolean('paid')->default(false);
             // Serialized array
             $table->string('item_array');
+            
+            $table->index('name');
         });
         
         // Represents an item
