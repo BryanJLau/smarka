@@ -198,7 +198,11 @@ class ItemsController extends Controller {
 	public function destroy($id)
 	{
 		//
-		Item::find($id)->delete();
+		$item = Item::find($id);
+        File::delete('uploads/'.$item->name.'_1.jpg');
+        if($item->picture2)
+            File::delete('uploads/'.$item->name.'_2.jpg');
+		$item->delete();
 		return Redirect::to('items');
 	}
 

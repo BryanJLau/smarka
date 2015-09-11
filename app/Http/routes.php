@@ -24,9 +24,11 @@ Route::get('items/list', 'ItemsController@listItems');
 Route::get('admin', function() {
     return view('admin');
 });
+Route::post('orders/all', 'OrdersController@payAll');
 
 Route::resource('items', 'ItemsController');
 Route::resource('notifications', 'NotificationsController',
     array('only' => array('index', 'create', 'store')));
-Route::resource('orders', 'OrdersController');
+Route::resource('orders', 'OrdersController',
+    array('only' => array('index', 'create', 'store', 'update', 'payAll')));
 
