@@ -22,13 +22,23 @@ class ItemsController extends Controller {
 	public function index()
 	{
 		//
-		$items = Item::all();
-        //return view('items.index', compact('items'));
-        return response()->json(
-            array(
-                'items' => $items
-            )
-        );
+		date_default_timezone_set("America/Los_Angeles");
+		// Ordering should not happen between 9 PM Friday through Saturday
+		if((date('l') == 'Friday' && date('G') >= 21) ||
+		    date('l') == 'Saturday') {
+		    http_response_code(503);    // Service Unavailable
+		    return "The menu is rotating right now. " .
+		        "Please try again on Sunday.";
+        }
+		else {
+		    $items = Item::all();
+            //return view('items.index', compact('items'));
+            return response()->json(
+                array(
+                    'items' => $items
+                )
+            );
+        }
 	}
 
 	/**
