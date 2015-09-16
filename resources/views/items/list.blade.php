@@ -24,11 +24,11 @@
             <td>{{ $item->price }}</td>
             <td>{{ $item->active }}</td>
             <td>
-                <img src="/uploads/{{{ $item->name }}}_1.jpg">
+                <img src="/uploads/{{{ $item->hash }}}_1.jpg">
             </td>
             <td>
                 @if($item->picture2)
-                    <img src="/uploads/{{{ $item->name }}}_2.jpg">
+                    <img src="/uploads/{{{ $item->hash }}}_2.jpg">
                 @else
                     No second image
                 @endif

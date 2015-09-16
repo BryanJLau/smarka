@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Order;
+use App\Item;   // To look up prices
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -70,8 +71,15 @@ class OrdersController extends Controller {
             $order->address = Request::input('address');
         }
         
+        if(Request::has('email')) {
+            $order->address = Request::input('email');
+        }
+        
 		date_default_timezone_set("America/Los_Angeles");
-        $item->ordered_on = (new DateTime())->format('Y-m-d H:i:s');
+		$dt = date('Y-m-d H:i:s');
+        $order->ordered_on = $dt;
+        
+        $order->total = 0;
         
         // Check for valid JSON array
         if(Request::has('item_array')) {
@@ -79,7 +87,14 @@ class OrdersController extends Controller {
             if(substr($itemArray, -1) == "]" &&     // First character [
                 substr($itemArray, 0, 1) == "[" &&  // Last character ]
                 json_decode($itemArray)) {          // Is valid JSON
-            $order->item_array = Request::input('item_array');
+                
+                $order->item_array = Request::input('item_array');
+                
+                foreach(json_decode($itemArray) as $orderItem) {
+                    $menuItem = Item::where('name', $orderItem->name)->first();
+                
+                    $order->total += $orderItem->qty * $menuItem->price;
+                }
             }
         } else {
             http_response_code(400);    // Bad request
@@ -88,7 +103,7 @@ class OrdersController extends Controller {
         
         $order->save();
         
-        return "Success";
+        return "Thank you for your order!";
 	}
 
 	/**

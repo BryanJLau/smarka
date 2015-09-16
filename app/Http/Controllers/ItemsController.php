@@ -31,13 +31,9 @@ class ItemsController extends Controller {
 		        "Please try again on Sunday.";
         }
 		else {
-		    $items = Item::all();
+		    $items = Item::where('active', 1)->get();
             //return view('items.index', compact('items'));
-            return response()->json(
-                array(
-                    'items' => $items
-                )
-            );
+            return response()->json($items);
         }
 	}
 
@@ -61,6 +57,9 @@ class ItemsController extends Controller {
 	{
 		//
 		$item = new Item;
+        
+        // Hash for storing unique filenames
+        $item->hash = hash('md5', date('Y-m-d H:i:s'));
         
         if(Request::has('name')) {
             $item->name = Request::input('name');
@@ -86,7 +85,11 @@ class ItemsController extends Controller {
             $destination = 'uploads';
             // Give it a unique filename
             $extension = Input::file('picture1')->getClientOriginalExtension();
-            $filename = Request::input('name').'_1.'.$extension;
+            if(strtolower($extension) != 'jpg') {
+                return "Please upload only .jpg files.";
+            } else {
+                $filename = $item->hash . "_1." . strtolower($extension);
+            }
             
             Input::file('picture1')->move($destination, $filename);
         } else {
@@ -97,7 +100,11 @@ class ItemsController extends Controller {
             $destination = 'uploads';
             // Give it a unique filename
             $extension = Input::file('picture2')->getClientOriginalExtension();
-            $filename = Request::input('name').'_2.'.$extension;
+            if(strtolower($extension) != 'jpg') {
+                return "Please upload only .jpg files.";
+            } else {
+                $filename = $item->hash . "_2." . strtolower($extension);
+            }
             
             Input::file('picture2')->move($destination, $filename);
             
@@ -163,21 +170,29 @@ class ItemsController extends Controller {
             $destination = 'uploads';
             // Give it a unique filename
             $extension = Input::file('picture1')->getClientOriginalExtension();
-            $filename = $item->name.'_1.'.$extension;
+            if(strtolower($extension) != 'jpg') {
+                return "Please upload only .jpg files.";
+            } else {
+                $filename = $item->hash . "_1." . strtolower($extension);
+            }
             
-            File::delete('uploads/'.$item->name.'_1.jpg');
+            File::delete('uploads/'.$item->hash.'_1.jpg');
             Input::file('picture1')->move($destination, $filename);
         }
         
         if(isset($_POST['active']) || Request::file('picture2')) {
-            File::delete('uploads/'.$item->name.'_2.jpg');
+            File::delete('uploads/'.$item->hash.'_2.jpg');
         }
         
         if(Request::file('picture2')) {
             $destination = 'uploads';
             // Give it a unique filename
             $extension = Input::file('picture2')->getClientOriginalExtension();
-            $filename = $item->name.'_2.'.$extension;
+            if(strtolower($extension) != 'jpg') {
+                return "Please upload only .jpg files.";
+            } else {
+                $filename = $item->hash . "_2." . strtolower($extension);
+            }
             
             Input::file('picture2')->move($destination, $filename);
             

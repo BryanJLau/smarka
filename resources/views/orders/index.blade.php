@@ -7,6 +7,10 @@
 <input type="submit" value="Pay all orders">
 </form>
 
+<a href="/orders?all=1">All orders</a>
+<br>
+<a href="/orders">Unpaid orders</a>
+
 <br><br>
 
 <table border="1">
@@ -15,21 +19,21 @@
         <td>Name</td>
         <td>Phone</td>
         <td>Address</td>
+        <td>Email</td>
         <td>Ordered Date</td>
+        <td>Total</td>
         <td>Paid?</td>
         <td>Item List</td>
         <td>Toggle?</td>
     @foreach($orders as $order)
         <tr>
             <td>{{ $order->id }}</td>
-            <td>
-                <a href="/order/{{{ $order->id }}}/edit">
-                    {{ $order->name }}
-                </a>
-            </td>
+            <td>{{ $order->name }}</td>
             <td>{{ $order->phone }}</td>
             <td>{{ $order->address }}</td>
+            <td>{{ $order->email }}</td>
             <td>{{ $order->ordered_on }}</td>
+            <td>{{ $order->total }}</td>
             <td>{{ $order->paid }}</td>
             <td>
                 @foreach($order->item_array as $item)
