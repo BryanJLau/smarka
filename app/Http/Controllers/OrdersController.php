@@ -19,18 +19,41 @@ class OrdersController extends Controller {
 	public function index()
 	{
 		//
+		// For this week's batch of items
+		$requiredItems = array();
+		
 		if(isset($_GET['all'])) {
 		    // Want all orders for some reason, use with caution
 		    $orders = Order::all();
+		    foreach($orders as $order) {
+		        // Parse it so that the template knows how to use it
+	            $order->item_array = JSON_decode($order->item_array);
+            }
 		}
 		else {
 		    // Get unpaid orders by default
 		    $orders = Order::where('paid', '=', 0)->get();
+		
+		    // Calculate totals for this batch
+		    foreach($orders as $order) {
+	            $order->item_array = JSON_decode($order->item_array);
+	            foreach($order->item_array as $item) {
+	                if(array_key_exists($item->name, $requiredItems)) {
+	                    // The item was already added, just add the quantity
+	                    $requiredItems[$item->name] += $item->qty;
+	                }
+	                else {
+	                    // The item isn't added yet, make a new entry
+	                    $requiredItems[$item->name] = $item->qty;
+	                }
+	            }
+	        }
 		}
-		foreach($orders as $order) {
-		        $order->item_array = JSON_decode($order->item_array);
-		    }
-            return view('orders.index')->with('orders', $orders);
+	    
+        return view('orders.index')->with(array(
+            'orders' => $orders,
+            'requiredItems' => $requiredItems
+        ));
 	}
 
 	/**
@@ -51,10 +74,12 @@ class OrdersController extends Controller {
 	public function store()
 	{
 		//
+        $emailData = array();
 		$order = new Order;
         
         if(Request::has('name')) {
             $order->name = Request::input('name');
+            $emailData['name'] = $order->name;
         } else {
             http_response_code(400);    // Bad request
             return "Please provide a name.";
@@ -62,6 +87,7 @@ class OrdersController extends Controller {
         
         if(Request::has('phone')) {
             $order->phone = Request::input('phone');
+            $emailData['phone'] = $order->phone;
         } else {
             http_response_code(400);    // Bad request
             return "Please provide a phone number that has texting.";
@@ -69,10 +95,14 @@ class OrdersController extends Controller {
         
         if(Request::has('address')) {
             $order->address = Request::input('address');
+            $emailData['address'] = $order->address;
+        } else {
+            http_response_code(400);    // Bad request
+            return "Please provide an address.";
         }
         
         if(Request::has('email')) {
-            $order->address = Request::input('email');
+            $order->email = Request::input('email');
         }
         
 		date_default_timezone_set("America/Los_Angeles");
@@ -84,6 +114,7 @@ class OrdersController extends Controller {
         // Check for valid JSON array
         if(Request::has('item_array')) {
             $itemArray = Request::input('item_array');
+            $emailData['itemArray'] = array();
             if(substr($itemArray, -1) == "]" &&     // First character [
                 substr($itemArray, 0, 1) == "[" &&  // Last character ]
                 json_decode($itemArray)) {          // Is valid JSON
@@ -92,9 +123,14 @@ class OrdersController extends Controller {
                 
                 foreach(json_decode($itemArray) as $orderItem) {
                     $menuItem = Item::where('name', $orderItem->name)->first();
-                
-                    $order->total += $orderItem->qty * $menuItem->price;
+                    $itemTotal = $orderItem->qty * $menuItem->price;
+                    $orderItem->itemTotal = $itemTotal;
+                    // We need all item information to put in the email
+                    $emailData['itemArray'][] = $orderItem;
+                    $order->total += $itemTotal;
                 }
+            } else {
+                return Request::input('item_array');
             }
         } else {
             http_response_code(400);    // Bad request
@@ -102,6 +138,18 @@ class OrdersController extends Controller {
         }
         
         $order->save();
+        
+        $emailData['total'] = $order->total;
+        
+        if(Request::has('email')) {
+            \Mail::send('emails.receipt', $emailData, function ($message) {
+                $message->from("***REMOVED***", "Hom's Kitchen");
+                $message->subject('Hom\'s Kitchen Order Confirmation');
+                $message->cc('homskitchen@outlook.com');
+                $message->to(Request::input('email'));
+            });
+        }
+        
         
         return "Thank you for your order!";
 	}

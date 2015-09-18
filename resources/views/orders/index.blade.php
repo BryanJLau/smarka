@@ -13,6 +13,21 @@
 
 <br><br>
 
+This week's batch:<br>
+<table border="1">
+    <tr>
+        <td>Quantity</td>
+        <td>Name</td>
+    </tr>
+@foreach($requiredItems as $name => $quantity)
+    <tr>
+        <td>{{ $quantity }}</td>
+        <td>{{ $name }}</td>
+    </tr>
+@endforeach
+</table>
+<br><br>
+
 <table border="1">
     <tr>
         <td>ID</td>
