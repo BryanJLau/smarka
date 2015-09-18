@@ -20,10 +20,17 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
+// Add the admin panel for items
 Route::get('items/list', 'ItemsController@listItems');
+// Admin panel
 Route::get('admin', function() {
     return view('admin');
 });
+// Preview email
+Route::get('emails/preview', function() {
+    return view('emails/receipt');
+});
+// Pay all orders
 Route::post('orders/all', 'OrdersController@payAll');
 
 Route::resource('items', 'ItemsController');
