@@ -34,6 +34,7 @@ This week's batch:<br>
         <td>Name</td>
         <td>Phone</td>
         <td>Address</td>
+        <td>Pickup</td>
         <td>Email</td>
         <td>Ordered Date</td>
         <td>Total</td>
@@ -46,6 +47,7 @@ This week's batch:<br>
             <td>{{ $order->name }}</td>
             <td>{{ $order->phone }}</td>
             <td>{{ $order->address }}</td>
+            <td>{{ $order->location }}</td>
             <td>{{ $order->email }}</td>
             <td>{{ $order->ordered_on }}</td>
             <td>{{ $order->total }}</td>
