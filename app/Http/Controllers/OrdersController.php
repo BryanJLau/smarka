@@ -96,9 +96,14 @@ class OrdersController extends Controller {
         if(Request::has('address')) {
             $order->address = Request::input('address');
             $emailData['address'] = $order->address;
+        }
+        
+        if(Request::has('location')) {
+            $order->location = Request::input('location');
+            $emailData['location'] = $order->location;
         } else {
             http_response_code(400);    // Bad request
-            return "Please provide an address.";
+            return "Please provide a location.";
         }
         
         if(Request::has('email')) {

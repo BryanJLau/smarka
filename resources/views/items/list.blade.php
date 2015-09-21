@@ -12,6 +12,7 @@
         <td>Active</td>
         <td>Picture 1</td>
         <td>Picture 2</td>
+    </tr>
     @foreach($items as $item)
         <tr>
             <td>{{ $item->id }}</td>

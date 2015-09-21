@@ -4,6 +4,7 @@ Your order is as follows:<br><br>
 Name: {{ $name }}<br>
 Address: {{ $address }}<br>
 Phone: {{ $phone }}<br>
+Pickup: {{ $location }}<br>
 <br>
 Ordered items:<br>
 @foreach($itemArray as $item)

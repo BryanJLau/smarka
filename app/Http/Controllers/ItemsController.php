@@ -27,8 +27,7 @@ class ItemsController extends Controller {
 		if((date('l') == 'Friday' && date('G') >= 21) ||
 		    date('l') == 'Saturday') {
 		    http_response_code(503);    // Service Unavailable
-		    return "The menu is rotating right now. " .
-		        "Please try again on Sunday.";
+		    return response()->json([]);
         }
 		else {
 		    $items = Item::where('active', 1)->get();
