@@ -2,8 +2,13 @@
 <hr />
 Your order is as follows:<br><br>
 Name: {{ $name }}<br>
+@if ($address != "")
 Address: {{ $address }}<br>
+@endif
 Phone: {{ $phone }}<br>
+@if ($email != "")
+Email: {{ $email }}<br>
+@endif
 Pickup: {{ $location }}<br>
 <br>
 Ordered items:<br>
