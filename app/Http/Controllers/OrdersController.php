@@ -97,6 +97,9 @@ class OrdersController extends Controller {
             $order->address = Request::input('address');
             $emailData['address'] = $order->address;
         }
+        else {
+            $order->address = $emailData['address'] = "";
+        }
         
         if(Request::has('location')) {
             $order->location = Request::input('location');
@@ -111,7 +114,9 @@ class OrdersController extends Controller {
                     FILTER_VALIDATE_EMAIL) === false) {
                 return "Please enter a valid email.";
             }
-            $order->email = Request::input('email');
+            $order->email = $emailData['email'] = Request::input('email');
+        } else {
+            $order->email = $emailData['email'] = "";
         }
         
 		date_default_timezone_set("America/Los_Angeles");
@@ -156,6 +161,13 @@ class OrdersController extends Controller {
                 $message->subject('Hom\'s Kitchen Order Confirmation');
                 $message->cc('homskitchen@outlook.com');
                 $message->to(Request::input('email'));
+            });
+        }
+        else {
+            \Mail::send('emails.receipt', $emailData, function ($message) {
+                $message->from("***REMOVED***", "Hom's Kitchen");
+                $message->subject('Hom\'s Kitchen Order Confirmation');
+                $message->to('homskitchen@outlook.com');
             });
         }
         
