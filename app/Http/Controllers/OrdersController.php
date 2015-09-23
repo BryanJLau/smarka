@@ -159,18 +159,15 @@ class OrdersController extends Controller {
             \Mail::send('emails.receipt', $emailData, function ($message) {
                 $message->from("prettyching821@hotmail.com", "Hom's Kitchen");
                 $message->subject('Hom\'s Kitchen Order Confirmation');
-                $message->cc('homskitchen@outlook.com');
                 $message->to(Request::input('email'));
             });
         }
-        else {
-            \Mail::send('emails.receipt', $emailData, function ($message) {
-                $message->from("prettyching821@hotmail.com", "Hom's Kitchen");
-                $message->subject('Hom\'s Kitchen Order Confirmation');
-                $message->to('homskitchen@outlook.com');
-            });
-        }
         
+        \Mail::send('emails.receipt', $emailData, function ($message) {
+            $message->from("prettyching821@hotmail.com", "Hom's Kitchen");
+            $message->subject('Hom\'s Kitchen Order Confirmation');
+            $message->to('homskitchen@outlook.com');
+        });
         
         return "Thank you for your order!";
 	}
