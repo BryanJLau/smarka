@@ -88,9 +88,8 @@ class ItemsController extends Controller {
                 return "Please upload only .jpg files.";
             } else {
                 $filename = $item->hash . "_1." . strtolower($extension);
+                Input::file('picture1')->move($destination, $filename);
             }
-            
-            Input::file('picture1')->move($destination, $filename);
         } else {
             return "Please provide a picture.";
         }
@@ -103,9 +102,8 @@ class ItemsController extends Controller {
                 return "Please upload only .jpg files.";
             } else {
                 $filename = $item->hash . "_2." . strtolower($extension);
+                Input::file('picture2')->move($destination, $filename);
             }
-            
-            Input::file('picture2')->move($destination, $filename);
             
             $item->picture2 = true;
         }
@@ -173,14 +171,16 @@ class ItemsController extends Controller {
                 return "Please upload only .jpg files.";
             } else {
                 $filename = $item->hash . "_1." . strtolower($extension);
-            }
             
-            File::delete('uploads/'.$item->hash.'_1.jpg');
-            Input::file('picture1')->move($destination, $filename);
+                File::delete('uploads/'.$item->hash.'_1.jpg');
+                Input::file('picture1')->move($destination, $filename);
+            }
         }
         
-        if(isset($_POST['active']) || Request::file('picture2')) {
+        if(Request::has('dp2') && Request::input('dp2') ||
+                Request::file('picture2')) {
             File::delete('uploads/'.$item->hash.'_2.jpg');
+            $item->picture2 = false;
         }
         
         if(Request::file('picture2')) {
@@ -191,9 +191,8 @@ class ItemsController extends Controller {
                 return "Please upload only .jpg files.";
             } else {
                 $filename = $item->hash . "_2." . strtolower($extension);
+                Input::file('picture2')->move($destination, $filename);
             }
-            
-            Input::file('picture2')->move($destination, $filename);
             
             $item->picture2 = true;
         }
