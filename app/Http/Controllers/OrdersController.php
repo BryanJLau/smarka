@@ -93,12 +93,12 @@ class OrdersController extends Controller {
             return "Please provide a phone number that has texting.";
         }
         
-        if(Request::has('address')) {
-            $order->address = Request::input('address');
-            $emailData['address'] = $order->address;
+        if(Request::has('notes')) {
+            $order->notes = Request::input('notes');
+            $emailData['notes'] = $order->notes;
         }
         else {
-            $order->address = $emailData['address'] = "";
+            $order->notes = $emailData['notes'] = "";
         }
         
         if(Request::has('location')) {

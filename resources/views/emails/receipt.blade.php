@@ -2,9 +2,6 @@
 <hr />
 Your order is as follows:<br><br>
 Name: {{ $name }}<br>
-@if ($address != "")
-Address: {{ $address }}<br>
-@endif
 Phone: {{ $phone }}<br>
 @if ($email != "")
 Email: {{ $email }}<br>
@@ -15,6 +12,9 @@ Ordered items:<br>
 @foreach($itemArray as $item)
     {{ $item->qty }} x {{ $item->name }} = ${{ $item->itemTotal }}<br>
 @endforeach
-Total: ${{ $total }}<br>
+Total: ${{ $total }}<br><br>
+@if ($notes != "")
+Special notes: {{ $notes }}<br>
+@endif
 <br>
 Thank you for using Hom's Kitchen!<br>
