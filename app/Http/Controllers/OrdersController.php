@@ -158,7 +158,8 @@ class OrdersController extends Controller {
         if(Request::has('email')) {
             \Mail::send('emails.receipt', $emailData, function ($message) {
                 $message->from(
-                    getenv('MAIL_USERNAME') || env('MAIL_USERNAME'),
+                    getenv('MAIL_USERNAME') ?
+                        getenv('MAIL_USERNAME') : env('MAIL_USERNAME'),
                     "Hom's Kitchen"
                 );
                 $message->subject('Hom\'s Kitchen Order Confirmation');
@@ -168,7 +169,8 @@ class OrdersController extends Controller {
         
         \Mail::send('emails.receipt', $emailData, function ($message) {
             $message->from(
-                getenv('MAIL_USERNAME') || env('MAIL_USERNAME'),
+                getenv('MAIL_USERNAME') ?
+                    getenv('MAIL_USERNAME') : env('MAIL_USERNAME'),
                 "Hom's Kitchen"
             );
             $message->subject('Hom\'s Kitchen Order Confirmation');
