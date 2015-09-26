@@ -157,14 +157,20 @@ class OrdersController extends Controller {
         
         if(Request::has('email')) {
             \Mail::send('emails.receipt', $emailData, function ($message) {
-                $message->from("prettyching821@hotmail.com", "Hom's Kitchen");
+                $message->from(
+                    getenv('MAIL_USERNAME') || env('MAIL_USERNAME'),
+                    "Hom's Kitchen"
+                );
                 $message->subject('Hom\'s Kitchen Order Confirmation');
                 $message->to(Request::input('email'));
             });
         }
         
         \Mail::send('emails.receipt', $emailData, function ($message) {
-            $message->from("prettyching821@hotmail.com", "Hom's Kitchen");
+            $message->from(
+                getenv('MAIL_USERNAME') || env('MAIL_USERNAME'),
+                "Hom's Kitchen"
+            );
             $message->subject('Hom\'s Kitchen Order Confirmation');
             $message->to('homskitchen@outlook.com');
         });
