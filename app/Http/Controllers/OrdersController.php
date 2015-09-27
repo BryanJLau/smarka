@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\File;
 
@@ -24,7 +25,7 @@ class OrdersController extends Controller {
 		
 		if(isset($_GET['all'])) {
 		    // Want all orders for some reason, use with caution
-		    $orders = Order::all();
+		    $orders = Order::orderBy('id', 'desc')->get();
 		    foreach($orders as $order) {
 		        // Parse it so that the template knows how to use it
 	            $order->item_array = JSON_decode($order->item_array);
@@ -32,7 +33,8 @@ class OrdersController extends Controller {
 		}
 		else {
 		    // Get unpaid orders by default
-		    $orders = Order::where('paid', '=', 0)->get();
+		    $orders = Order::where('paid', '=', 0)->orderBy('id', 'desc')
+		        ->get();
 		
 		    // Calculate totals for this batch
 		    foreach($orders as $order) {
@@ -50,10 +52,15 @@ class OrdersController extends Controller {
 	        }
 		}
 	    
-        return view('orders.index')->with(array(
+	    return Response::json(array(
             'orders' => $orders,
             'requiredItems' => $requiredItems
         ));
+        /*
+        return view('orders.index')->with(array(
+            'orders' => $orders,
+            'requiredItems' => $requiredItems
+        ));*/
 	}
 
 	/**
@@ -216,7 +223,7 @@ class OrdersController extends Controller {
 		$order->paid = !$order->paid;
 		$order->save();
 		
-		return Redirect::to('orders');
+        return Response::make("Success", 205);
 	}
 
 	/**

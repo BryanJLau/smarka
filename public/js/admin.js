@@ -19,7 +19,11 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
         $scope.items = [];
         $scope.locations = [];
         $scope.notification = "";
-        $scope.orders = [];
+        $scope.orders = {
+            orders: [],         // Actual orders array
+            requiredItems: [],  // Required items for this week's batch
+            all: false          // Is requesting all, enables "pay all" button
+        };
     }
     
     // +-----------------+
@@ -144,6 +148,72 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
                 $('#addNotificationLoaderGif').addClass('hidden');
                 $('#addNotificationsErrorMessage').text(error.data);
                 $('#addNotificationsErrorDiv').removeClass('hidden');
+            });
+    };
+    
+    // +--------------+
+    // |    Orders    |
+    // +--------------+
+    // Display pending orders
+    $scope.showPendingOrders = function () {
+        $('.orders-nav').removeClass('active');
+        $('#orders-pending-tab').addClass('active');
+        
+        $scope.orders.all = false;
+        $('.orderToggle').bootstrapToggle();
+        
+        $http.get("/orders")
+            .success(function(response) {
+                $('.content').addClass('hidden');
+                $('#content-orders').removeClass('hidden');
+                $scope.orders.orders = response.orders;
+                $scope.orders.requiredItems = response.requiredItems;
+            });
+    };
+    
+    // Show all orders (dangerous)
+    $scope.showAllOrders = function () {
+        $('.orders-nav').removeClass('active');
+        $('#orders-completed-tab').addClass('active');
+        
+        $scope.orders.all = true;
+        $('.orderToggle').bootstrapToggle();
+        
+        $http.get("/orders?all=true")
+            .success(function(response) {
+                $('.content').addClass('hidden');
+                $('#content-orders').removeClass('hidden');
+                $scope.orders.orders = response.orders;
+                $scope.orders.requiredItems = response.requiredItems;
+            });
+    };
+    
+    // Toggle an order from paid to unpaid and vice versa
+    $scope.toggleOrder = function (id) {
+        $http.put('/orders/' + id, {})
+            .then(function (response) {
+                // Just reload data
+                if($scope.orders.all) {
+                    $scope.showAllOrders();
+                }
+                else {
+                    $scope.showPendingOrders();
+                }
+            },
+            function (error) {
+                alert(error.data);
+            });
+    };
+    
+    // Pay off all the orders at once
+    $scope.payAllOrders = function () {
+        $http.post('/orders/all', {})
+            .then(function (response) {
+                // Just reload to tell user it's done
+                $scope.showPendingOrders();
+            },
+            function (error) {
+                alert(error.data);
             });
     };
 });

@@ -5,7 +5,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
-<script src="http://malsup.github.com/jquery.form.js"></script>
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
 <script src="/js/admin.js"></script>
 <body ng-app="adminApp" ng-controller="AdminCtrl" ng-init="init()">
 <!--
@@ -107,7 +108,7 @@
 				    </a>
 				</li>
 				<li class="enabled">
-					<a href="#" role="button" ng-click="showLocations()">
+					<a href="#" role="button" ng-click="showPendingOrders()">
 					    Orders List
 				    </a>
 				</li>
@@ -129,6 +130,9 @@
 			</ng-include>
 			<ng-include id="content-notifications" class="content hidden"
 			    src="'/templates/notificationsView.html'">
+			</ng-include>
+			<ng-include id="content-orders" class="content hidden"
+			    src="'/templates/ordersView.html'">
 			</ng-include>
 		</div>
 		<div class="col-md-2">

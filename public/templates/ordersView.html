@@ -1,0 +1,89 @@
+<div class="panel panel-default">
+    <div id="content-title" class="panel-heading">
+	    Orders
+    </div>
+    <div class="panel-body">
+        <ul class="nav nav-tabs">
+			<li id="orders-pending-tab" class="orders-nav active">
+				<a href="#" role="button" ng-click="showPendingOrders()">
+				    Pending
+			    </a>
+			</li>
+			<li id="orders-completed-tab" class="orders-nav">
+				<a href="#" role="button" ng-click="showAllOrders()">
+				    Completed
+			    </a>
+			</li>
+		</ul>
+    
+        <div ng-if="!orders.all" class="table-responsive">
+            <h3>This week's batch:</h3>
+            <table class="table table-condensed table-hover table-bordered">
+                <tr>
+                    <td class="lead">Quantity</td>
+                    <td class="lead">Item</td>
+                </tr>
+                <tr ng-repeat="(key, value) in orders.requiredItems">
+                    <td>{{ value }}</td>
+                    <td>{{ key }}</td>
+                </tr>
+            </table>
+            <hr />
+        </div>
+        
+	    <div class="table-responsive">
+	        <h3>Requested Orders - 
+	            <span ng-if="!orders.all">Pending</span>
+	            <span ng-if="orders.all">All</span>
+	            <button class="btn btn-info btn-sm pull-right"
+	                ng-if="!orders.all" ng-click="payAllOrders()">
+                    Pay All
+                </button>
+	        </h3>
+            <table class="table table-condensed table-hover table-bordered">
+                <tr>
+                    <td class="lead">ID</td>
+                    <td class="lead">Paid</td>
+                    <td class="lead">Name</td>
+                    <td class="lead">Phone</td>
+                    <td class="lead">Pickup Location</td>
+                    <td class="lead">Special Notes</td>
+                    <td class="lead">Total</td>
+                    <td class="lead">Item List</td>
+                    <td class="lead">Ordered Date</td>
+                    <td class="lead">Email</td>
+                </tr>
+                <tr ng-repeat="order in orders.orders">
+                    <td>{{ order.id }}</td>
+                    <td>
+                        <!-- Both buttons do the same thing, just cosmetic -->
+                        <button type="button" ng-if="order.paid == 1"
+                                class="btn btn-danger"
+                                ng-click="toggleOrder(order.id)">
+                            Unpay
+                        </button>
+                        <button type="button" ng-if="order.paid == 0"
+                                class="btn btn-success"
+                                ng-click="toggleOrder(order.id)">
+                            Pay
+                        </button>
+                    </td>
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.phone }}</td>
+                    <td>{{ order.location }}</td>
+                    <td>{{ order.notes }}</td>
+                    <td>{{ order.total }}</td>
+                    <td>
+                        <span ng-repeat="item in order.item_array">
+                            {{ item.qty }} x {{ item.name }}<br>
+                        </span>
+                    </td>
+                    <td>{{ order.ordered_on }}</td>
+                    <td>{{ order.email }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+
