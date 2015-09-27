@@ -28,6 +28,9 @@ Route::get('locations/list', 'LocationsController@listLocations');
 Route::get('admin', function() {
     return view('admin');
 });
+Route::post('admin', function() {
+    return view('admin');
+});
 // Preview email
 Route::get('emails/preview', function() {
     return view('emails/receipt');

@@ -5,6 +5,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Redirect;
 
 class LocationsController extends Controller {
@@ -40,16 +41,17 @@ class LocationsController extends Controller {
 	{
 		//
 		$location = new Location;
+            http_response_code(400);
         
-        if(Request::has('location')) {
+        if(Request::has('location') && Request::input('location') != "") {
             $location->location = Request::input('location');
+            $location->save();
+            return Response::make("Success", 201);
+        return "fdsa";
         } else {
-            return "Please provide text.";
+            // Bad request, missing parameters
+            return Response::make("Please provide a time and location.", 400);
         }
-        
-        $location->save();
-        
-        return Redirect::to('admin');
 	}
 
 	/**
@@ -97,7 +99,7 @@ class LocationsController extends Controller {
 		$location = Location::find($id);
 
         $location->delete();
-        return Redirect::to('locations/list');
+        return Response::make("Success", 204);
 	}
 	
 	public function listLocations()
