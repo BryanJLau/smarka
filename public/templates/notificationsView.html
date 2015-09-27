@@ -1,0 +1,55 @@
+<div id="addNotificationsModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Add Notification</h4>
+            </div>
+            <div class="modal-body">
+                <div id="addNotificationsErrorDiv" 
+                    class='alert alert-danger hidden'>
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    &nbsp;
+                    <span id="addNotificationsErrorMessage"></span>
+                </div>
+
+                <!-- Begin form -->
+                <form name="addNotificationsForm" role="form">
+                    <div class="form-group has-feedback">
+                        <label for="location">Text:</label>
+                        <textarea class="form-control" rows="5"
+                            id="notificationsText" 
+                            ng-model="$parent.addNotificationsForm.text"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <img id="addNotificationLoaderGif" src="/images/ajax-loader.gif"
+                    class="hidden"/>
+                <button type="button" class="btn btn-default"
+                    data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary"
+                    ng-click="addNotification()">Add notification</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div id="content-title" class="panel-heading">
+	    Notifications
+	    <button class="btn btn-success btn-xs pull-right" 
+	            ng-click="showAddNotificationModal()">
+	        Create a new notification
+	    </button>
+    </div>
+    <div class="panel-body">    
+	    <p>Last notification:</p>
+	    <blockquote>
+	        <!-- Factor in line breaks in the string -->
+	        <pre>{{ notification }}</pre>
+        </blockquote>
+    </div>
+</div>
+
+

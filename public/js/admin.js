@@ -3,9 +3,6 @@ $(document).ready(function () {
         $(".active").removeClass("active");
         $(this).addClass("active");
     });
-    
-    // To clear the locations textarea, otherwise it shows [object Object]
-    $("textarea#locationsLocation").val("");
 });
 
 var adminApp = angular.module('adminApp', []);
@@ -15,9 +12,13 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
         $scope.addLocationsForm = {
             location: ""
         };
+        $scope.addNotificationsForm = {
+            text: ""
+        };
         
         $scope.items = [];
         $scope.locations = [];
+        $scope.notification = "";
         $scope.orders = [];
     }
     
@@ -50,26 +51,26 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
             location: $scope.addLocationsForm.location
         };
         
-        if(typeof $scope.addLocationsForm.location === 'string') {
-            $http.post('/locations', addLocationData)
-                .then(function (response) {
-                    // Return everything to normal
-                    $('#addLocationLoaderGif').addClass('hidden');
-                    $('#addLocationsModal').modal('hide');
+        //if(typeof $scope.addLocationsForm.location === 'string') {
+        $http.post('/locations', addLocationData)
+            .then(function (response) {
+                // Return everything to normal
+                $('#addLocationLoaderGif').addClass('hidden');
+                $('#addLocationsModal').modal('hide');
 
-                    // Reset the form
-                    $scope.addLocationsForm.location = "";
-                    $scope.addLocationsForm.$setPristine();
-                    
-                    // Reload notifications data
-                    $scope.showLocations();
-                },
-                function (error) {
-                    // Show the error message containing the error
-                    $('#addLocationLoaderGif').addClass('hidden');
-                    $('#addLocationsErrorMessage').text(error.data);
-                    $('#addLocationsErrorDiv').removeClass('hidden');
-                });
+                // Reset the form
+                $scope.addLocationsForm.location = "";
+                
+                // Reload notifications data
+                $scope.showLocations();
+            },
+            function (error) {
+                // Show the error message containing the error
+                $('#addLocationLoaderGif').addClass('hidden');
+                $('#addLocationsErrorMessage').text(error.data);
+                $('#addLocationsErrorDiv').removeClass('hidden');
+            });
+        /*
         } else {
             // This happens because the model addLocationForm.location
             // is bound to "undefined". I can't figure out a way to default
@@ -80,6 +81,7 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
                 .text("Please provide a time and location.");
             $('#addLocationsErrorDiv').removeClass('hidden');
         }
+        */
     };
     
     $scope.deleteLocation = function (id) {
@@ -94,4 +96,54 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
                 alert("Failed to delete goal: " + data);
             });
     }
+    
+    // +---------------------+
+    // |    Notifications    |
+    // +---------------------+
+    // Display notifications
+    $scope.showNotifications = function () {
+        $http.get("/notifications")
+            .success(function(response) {
+                $('.content').addClass('hidden');
+                $('#content-notifications').removeClass('hidden');
+                // \n doesn't translate automatically to <br>, do that here
+                $scope.notification = response.text || "Notification not set.";
+            });
+    };
+    
+    // Show the modal
+    // Doesn't need to be in controller, but for the sake of extensibility
+    $scope.showAddNotificationModal = function () {
+        $('#addNotificationsModal').modal('show');
+    }
+    
+    // Add a location
+    $scope.addNotification = function () {
+        $('#addNotificationLoaderGif').removeClass('hidden');
+        $('#addNotificationsErrorDiv').addClass('hidden');
+        
+        // Set the POST data
+        var addNotificationData = {
+            text: $scope.addNotificationsForm.text
+        };
+        
+        $http.post('/notifications', addNotificationData)
+            .then(function (response) {
+                // Return everything to normal
+                $('#addNotificationLoaderGif').addClass('hidden');
+                $('#addNotificationsModal').modal('hide');
+
+                // Reset the form
+                $scope.addNotificationsForm.text = "";
+                
+                // Reload notifications data
+                $scope.showNotifications();
+            },
+            function (error) {
+                // Show the error message containing the error
+                $('#addNotificationLoaderGif').addClass('hidden');
+                $('#addNotificationsErrorMessage').text(error.data);
+                $('#addNotificationsErrorDiv').removeClass('hidden');
+            });
+    };
 });

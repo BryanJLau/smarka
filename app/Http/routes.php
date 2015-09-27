@@ -34,10 +34,10 @@ Route::post('admin', function() {
 Route::post('orders/all', 'OrdersController@payAll');
 
 Route::resource('items', 'ItemsController');
-Route::resource('notifications', 'NotificationsController',
-    array('only' => array('index', 'create', 'store')));
-Route::resource('orders', 'OrdersController',
-    array('only' => array('index', 'create', 'store', 'update', 'payAll')));
 Route::resource('locations', 'LocationsController',
     array('only' => array('index', 'store', 'destroy')));
+Route::resource('notifications', 'NotificationsController',
+    array('only' => array('index', 'store')));
+Route::resource('orders', 'OrdersController',
+    array('only' => array('index', 'create', 'store', 'update', 'payAll')));
 

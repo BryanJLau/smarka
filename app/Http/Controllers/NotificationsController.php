@@ -5,6 +5,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Redirect;
 //use Illuminate\Http\Request;
 
@@ -42,15 +43,14 @@ class NotificationsController extends Controller {
 		//
 		$notification = new Notification;
         
-        if(Request::has('text')) {
+        if(Request::has('text') && Request::input('text') != "") {
             $notification->text = Request::input('text');
+            $notification->save();
+            return Response::make("Success", 201);
         } else {
-            return "Please provide text.";
+            // Bad request, missing parameters
+            return Response::make("Please provide a notification.", 400);
         }
-        
-        $notification->save();
-        
-        return Redirect::to('admin');
 	}
 
     // The below functions should not be needed and will not be implemented

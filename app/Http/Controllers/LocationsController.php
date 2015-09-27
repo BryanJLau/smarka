@@ -29,6 +29,7 @@ class LocationsController extends Controller {
 	public function create()
 	{
 		//
+		return view('locations.create');
 	}
 
 	/**
@@ -46,7 +47,6 @@ class LocationsController extends Controller {
             $location->location = Request::input('location');
             $location->save();
             return Response::make("Success", 201);
-        return "fdsa";
         } else {
             // Bad request, missing parameters
             return Response::make("Please provide a time and location.", 400);

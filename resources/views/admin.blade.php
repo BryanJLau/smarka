@@ -80,42 +80,7 @@
 
 <!-- Modals -->
 <!-- Add location modal -->
-<div id="addLocationsModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Add Location</h4>
-            </div>
-            <div class="modal-body">
-                <div id="addLocationsErrorDiv" 
-                    class='alert alert-danger hidden'>
-                    <span class="glyphicon glyphicon-warning-sign"></span>
-                    &nbsp;
-                    <span id="addLocationsErrorMessage"></span>
-                </div>
 
-                <!-- Begin form -->
-                <form name="addLocationsForm" role="form">
-                    <div class="form-group has-feedback">
-                        <label for="location">Location:</label>
-                        <textarea class="form-control" rows="5" name="location"
-                            id="locationsLocation" 
-                            ng-model="addLocationsForm.location"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <img id="addLocationLoaderGif" src="/images/ajax-loader.gif"
-                    class="hidden"/>
-                <button type="button" class="btn btn-default"
-                    data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary"
-                    ng-click="addLocation()">Add location</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Begin actual body -->
 <div class="container-fluid">
@@ -151,11 +116,19 @@
 					    Locations List
 				    </a>
 				</li>
+				<li class="enabled">
+					<a href="#" role="button" ng-click="showNotifications()">
+					    Notifications
+				    </a>
+				</li>
 			</ul>
 		</div>
 		<div class="col-md-6">
 		    <ng-include id="content-locations" class="content hidden"
-			    src="'/templates/notificationsList.html'">
+			    src="'/templates/locationsView.html'">
+			</ng-include>
+			<ng-include id="content-notifications" class="content hidden"
+			    src="'/templates/notificationsView.html'">
 			</ng-include>
 		</div>
 		<div class="col-md-2">
