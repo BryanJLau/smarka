@@ -1,5 +1,10 @@
-$(document).ready(function () {
-    $('#addLocationsModal').modal('show');
+$(document).ready(function () {    
+    $(".nav-pills > .enabled").click(function () {
+        $(".active").removeClass("active");
+        $(this).addClass("active");
+    });
+    
+    // To clear the locations textarea, otherwise it shows [object Object]
     $("textarea#locationsLocation").val("");
 });
 
@@ -10,6 +15,10 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
         $scope.addLocationsForm = {
             location: ""
         };
+        
+        $scope.items = [];
+        $scope.locations = [];
+        $scope.orders = [];
     }
     
     // +-----------------+
@@ -17,8 +26,19 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
     // +-----------------+
     // Display locations
     $scope.showLocations = function () {
-        
+        $http.get("/locations")
+            .success(function(response) {
+                $('.content').addClass('hidden');
+                $('#content-locations').removeClass('hidden');
+                $scope.locations = response;
+            });
     };
+    
+    // Show the modal
+    // Doesn't need to be in controller, but for the sake of extensibility
+    $scope.showAddLocationModal = function () {
+        $('#addLocationsModal').modal('show');
+    }
     
     // Add a location
     $scope.addLocation = function () {
@@ -40,6 +60,9 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
                     // Reset the form
                     $scope.addLocationsForm.location = "";
                     $scope.addLocationsForm.$setPristine();
+                    
+                    // Reload notifications data
+                    $scope.showLocations();
                 },
                 function (error) {
                     // Show the error message containing the error
@@ -58,4 +81,17 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
             $('#addLocationsErrorDiv').removeClass('hidden');
         }
     };
+    
+    $scope.deleteLocation = function (id) {
+        $('#deleteLocationsSuccessDiv').addClass('hidden');
+        $http.delete('/locations/' + id)
+            .success(function (data, status, headers) {
+                // Reload notifications data
+                $scope.showLocations();
+            })
+            .error(function (data, status, header, config) {
+                // Alert the user
+                alert("Failed to delete goal: " + data);
+            });
+    }
 });

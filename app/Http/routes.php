@@ -22,8 +22,6 @@ Route::controllers([
 
 // Add the admin panel for items
 Route::get('items/list', 'ItemsController@listItems');
-// Add the admin panel for items
-Route::get('locations/list', 'LocationsController@listLocations');
 // Admin panel
 Route::get('admin', function() {
     return view('admin');
@@ -31,10 +29,7 @@ Route::get('admin', function() {
 Route::post('admin', function() {
     return view('admin');
 });
-// Preview email
-Route::get('emails/preview', function() {
-    return view('emails/receipt');
-});
+
 // Pay all orders
 Route::post('orders/all', 'OrdersController@payAll');
 
@@ -43,5 +38,6 @@ Route::resource('notifications', 'NotificationsController',
     array('only' => array('index', 'create', 'store')));
 Route::resource('orders', 'OrdersController',
     array('only' => array('index', 'create', 'store', 'update', 'payAll')));
-Route::resource('locations', 'LocationsController');
+Route::resource('locations', 'LocationsController',
+    array('only' => array('index', 'store', 'destroy')));
 

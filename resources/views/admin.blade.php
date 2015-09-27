@@ -132,32 +132,31 @@
 		<div class="col-md-2">
 		</div>
 		<div class="col-md-2">
-			<ul class="nav nav-tabs nav-stacked">
+			<ul class="nav nav-pills nav-stacked">
 			    <li class="disabled">
 					<a href="#">Navigation</a>
 				</li>
 				<li class="enabled active">
-					<a href="#">Item List</a>
+					<a href="#" role="button" ng-click="showLocations()">
+					    Item List
+				    </a>
 				</li>
 				<li class="enabled">
-					<a href="#">Orders List</a>
+					<a href="#" role="button" ng-click="showLocations()">
+					    Orders List
+				    </a>
 				</li>
 				<li class="enabled">
-					<a href="#">Locations List</a>
+					<a href="#" role="button" ng-click="showLocations()">
+					    Locations List
+				    </a>
 				</li>
 			</ul>
 		</div>
 		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div id="content-title" class="panel-heading">
-					<h3 class="panel-title">
-						Panel title
-					</h3>
-				</div>
-				<div id="content-body" class="panel-body">
-					Panel content
-				</div>
-			</div>
+		    <ng-include id="content-locations" class="content hidden"
+			    src="'/templates/notificationsList.html'">
+			</ng-include>
 		</div>
 		<div class="col-md-2">
 		</div>

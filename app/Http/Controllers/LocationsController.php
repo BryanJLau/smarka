@@ -29,7 +29,6 @@ class LocationsController extends Controller {
 	public function create()
 	{
 		//
-		return view('locations.create');
 	}
 
 	/**
@@ -101,11 +100,4 @@ class LocationsController extends Controller {
         $location->delete();
         return Response::make("Success", 204);
 	}
-	
-	public function listLocations()
-    {
-        $locations = Location::all();
-        return view('locations.list')->with('locations', $locations);
-    }
-
 }
