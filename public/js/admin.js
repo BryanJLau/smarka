@@ -15,6 +15,25 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
         $scope.addNotificationsForm = {
             text: ""
         };
+        $scope.addItemsForm = {
+            name: "",
+            description: "",
+            price: "",
+            active: false
+        };
+        $scope.editItemsForm = {
+            name: "",
+            description: "",
+            price: "",
+            active: false
+        };
+        
+        $scope.editItemsPicturesForm = {
+            id: -1,
+            dp2: false
+        };
+        
+        $scope.editingItemId = -1;  // Not editing at the moment
         
         $scope.items = [];
         $scope.locations = [];
@@ -24,6 +43,212 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
             requiredItems: [],  // Required items for this week's batch
             all: false          // Is requesting all, enables "pay all" button
         };
+        
+        // Initialize the items view
+        $scope.showItems();
+    }
+    
+    // +-------------+
+    // |    Items    |
+    // +-------------+
+    // Display items
+    $scope.showItems = function () {
+        $http.get("/items?all=true")
+            .success(function(response) {
+                $('.content').addClass('hidden');
+                $('#content-items').removeClass('hidden');
+                $scope.items = response;
+                for(var i = 0; i < $scope.items.length; i++) {
+                    $scope.items[i].picture1Path = "/uploads/" +
+                        $scope.items[i].hash + "_1.jpg";
+                    if($scope.items[i].picture2 == 1)
+                        $scope.items[i].picture2Path = "/uploads/" +
+                            $scope.items[i].hash + "_2.jpg";
+                }
+            });
+    };
+    
+    // Show the modal
+    // Doesn't need to be in controller, but for the sake of extensibility
+    $scope.showAddItemModal = function () {
+        $('#addItemsModal').modal('show');
+    }
+    $scope.showEditItemModal = function (id) {
+        $scope.editingItemId = id;
+        $('#editItemsModal').modal('show');
+    }
+    
+    $scope.editItemsPicturesModal = function (id) {
+        $scope.editingItemId = id;
+        $scope.editItemsPicturesForm.id = id;
+        $('#editItemsPicturesModal').modal('show');
+    }
+    
+    // Store the pictures
+    $scope.upload1 = function(el) {
+        $scope.addItemsForm.picture1 = el.files[0];
+    };
+    $scope.upload2 = function(el) {
+        $scope.addItemsForm.picture2 = el.files[0];
+    };
+    $scope.eupload1 = function(el) {
+        $scope.editItemsPicturesForm.picture1 = el.files[0];
+    };
+    $scope.eupload2 = function(el) {
+        $scope.editItemsPicturesForm.picture2 = el.files[0];
+    };
+    
+    // Add an item
+    $scope.addItem = function () {
+        $('#addItemLoaderGif').removeClass('hidden');
+        $('#addItemsErrorDiv').addClass('hidden');
+        
+        // Code adapted from:
+        // http://stackoverflow.com/questions/16483873/angularjs-http-post-file-and-form-data
+        $http({
+            method: 'POST',
+            url: '/items',
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data: $scope.addItemsForm,
+            transformRequest: function (data, headersGetter) {
+                var formData = new FormData();
+                angular.forEach(data, function (value, key) {
+                    formData.append(key, value);
+                });
+
+                var headers = headersGetter();
+                delete headers['Content-Type'];
+
+                return formData;
+            }
+        })
+        .then(function (response) {
+            // Return everything to normal
+            $('#addItemLoaderGif').addClass('hidden');
+            $('#addItemsModal').modal('hide');
+
+            // Reset the form
+            $scope.addItemsForm.name = "";
+            $scope.addItemsForm.description = "";
+            $scope.addItemsForm.price = "";
+            $scope.addItemsForm.active = false;
+            $scope.addItemsForm.picture1 = "";
+            $scope.addItemsForm.picture1 = "";
+            
+            // Reload notifications data
+            $scope.showItems();
+        },
+        function (error) {
+            // Show the error message containing the error
+            $('#addItemLoaderGif').addClass('hidden');
+            $('#addItemsErrorMessage').text(error.data);
+            $('#addItemsErrorDiv').removeClass('hidden');
+        });
+    };
+    
+    $scope.editItem = function () {
+        $('#editItemLoaderGif').removeClass('hidden');
+        $('#editItemsErrorDiv').addClass('hidden');
+        
+        // Code adapted from:
+        // http://stackoverflow.com/questions/16483873/angularjs-http-post-file-and-form-data
+        $http({
+            method: 'PUT',
+            url: '/items/' + $scope.editingItemId,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: $scope.editItemsForm,
+            transformRequest: function (data, headersGetter) {
+                // Solution taken from:
+                // http://stackoverflow.com/questions/24710503/how-do-i-post-urlencoded-form-data-with-http-in-angularjs
+                var str = [];
+                for(var p in data)
+                str.push(encodeURIComponent(p) + "=" + encodeURIComponent(data[p]));
+                return str.join("&");
+            }
+        })
+        .then(function (response) {
+            // Return everything to normal
+            $('#editItemLoaderGif').addClass('hidden');
+            $('#editItemsModal').modal('hide');
+
+            // Reset the form
+            $scope.editItemsForm.name = "";
+            $scope.editItemsForm.description = "";
+            $scope.editItemsForm.price = "";
+            $scope.addItemsForm.active = false;
+            
+            // Reload notifications data
+            $scope.showItems();
+        },
+        function (error) {
+            // Show the error message containing the error
+            $('#editItemLoaderGif').addClass('hidden');
+            $('#editItemsErrorMessage').text(error.data);
+            $('#editItemsErrorDiv').removeClass('hidden');
+        });
+    };
+    
+    $scope.deleteItem = function (id) {
+        $http.delete('/items/' + id)
+            .success(function (data, status, headers) {
+                // Reload notifications data
+                $scope.showItems();
+            })
+            .error(function (data, status, header, config) {
+                // Alert the user
+                alert("Failed to delete item: " + data);
+            });
+    }
+    
+    $scope.editItemPictures = function () {
+        $('#editItemPicturesLoaderGif').removeClass('hidden');
+        $('#editItemsPicturesErrorDiv').addClass('hidden');
+        
+        // Code adapted from:
+        // http://stackoverflow.com/questions/16483873/angularjs-http-post-file-and-form-data
+        $http({
+            method: 'POST',
+            url: '/items/changePictures',
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data: $scope.editItemsPicturesForm,
+            transformRequest: function (data, headersGetter) {
+                var formData = new FormData();
+                angular.forEach(data, function (value, key) {
+                    formData.append(key, value);
+                });
+
+                var headers = headersGetter();
+                delete headers['Content-Type'];
+
+                return formData;
+            }
+        })
+        .then(function (response) {
+            // Return everything to normal
+            $('#editItemPicturesLoaderGif').addClass('hidden');
+            $('#editItemsPicturesModal').modal('hide');
+
+            // Reset the form
+            $scope.editItemsPicturesForm.id = -1;
+            $scope.editItemsPicturesForm.picture1 = "";
+            $scope.editItemsPicturesForm.picture2 = "";
+            $scope.editItemsPicturesForm.dp2 = false;
+            
+            // Reload notifications data
+            $scope.showItems();
+        },
+        function (error) {
+            // Show the error message containing the error
+            $('#editItemPicturesLoaderGif').addClass('hidden');
+            $('#editItemsPicturesErrorMessage').text(error.data);
+            $('#editItemsPicturesErrorDiv').removeClass('hidden');
+        });
     }
     
     // +-----------------+
@@ -89,7 +314,6 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
     };
     
     $scope.deleteLocation = function (id) {
-        $('#deleteLocationsSuccessDiv').addClass('hidden');
         $http.delete('/locations/' + id)
             .success(function (data, status, headers) {
                 // Reload notifications data
@@ -97,7 +321,7 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
             })
             .error(function (data, status, header, config) {
                 // Alert the user
-                alert("Failed to delete goal: " + data);
+                alert("Failed to delete location: " + data);
             });
     }
     

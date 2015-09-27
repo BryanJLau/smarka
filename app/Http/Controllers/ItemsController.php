@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\File;
 
@@ -22,17 +23,22 @@ class ItemsController extends Controller {
 	public function index()
 	{
 		//
-		date_default_timezone_set("America/Los_Angeles");
-		// Ordering should not happen between 9 PM Friday through Saturday
-		if((date('l') == 'Friday' && date('G') >= 21) ||
-		    date('l') == 'Saturday') {
-		    http_response_code(503);    // Service Unavailable
-		    return response()->json([]);
-        }
-		else {
-		    $items = Item::where('active', 1)->get();
-            //return view('items.index', compact('items'));
+		if(isset($_GET['all'])) {
+            $items = Item::all();
             return response()->json($items);
+		}
+		else {
+		    date_default_timezone_set("America/Los_Angeles");
+		    // Ordering should not happen between 9 PM Friday through Saturday
+		    if((date('l') == 'Friday' && date('G') >= 21) ||
+		        date('l') == 'Saturday') {
+		        http_response_code(503);    // Service Unavailable
+		        return response()->json([]);
+            }
+		    else {
+		        $items = Item::where('active', 1)->get();
+                return response()->json($items);
+            }
         }
 	}
 
@@ -63,35 +69,36 @@ class ItemsController extends Controller {
         if(Request::has('name')) {
             $item->name = Request::input('name');
         } else {
-            return "Please provide a name.";
+            return Response::make("Please provide a name.", 400);
         }
         
         if(Request::has('description')) {
             $item->description = Request::input('description');
         } else {
-            return "Please provide a description.";
+            return Response::make("Please provide a description.", 400);
         }
         
         if(Request::has('price')) {
             $item->price = Request::input('price');
         } else {
-            return "Please provide a price.";
+            return Response::make("Please provide a price.", 400);
         }
         
-        $item->active = isset($_POST['active']);
+        $item->active = (Request::has('active') &&
+            Request::input('active') == "true");
         
         if(Request::file('picture1')) {
             $destination = 'uploads';
             // Give it a unique filename
             $extension = Input::file('picture1')->getClientOriginalExtension();
             if(strtolower($extension) != 'jpg') {
-                return "Please upload only .jpg files.";
+                return Response::make("Please upload only .jpg files.", 400);
             } else {
                 $filename = $item->hash . "_1." . strtolower($extension);
                 Input::file('picture1')->move($destination, $filename);
             }
         } else {
-            return "Please provide a picture.";
+            return Response::make("Please provide a main picture.", 400);
         }
         
         if(Request::file('picture2')) {
@@ -99,7 +106,7 @@ class ItemsController extends Controller {
             // Give it a unique filename
             $extension = Input::file('picture2')->getClientOriginalExtension();
             if(strtolower($extension) != 'jpg') {
-                return "Please upload only .jpg files.";
+                return Response::make("Please upload only .jpg files.", 400);
             } else {
                 $filename = $item->hash . "_2." . strtolower($extension);
                 Input::file('picture2')->move($destination, $filename);
@@ -109,8 +116,7 @@ class ItemsController extends Controller {
         }
         
         $item->save();
-        
-        return Redirect::to('items/list');
+        return Response::make("Success", 201);
 	}
 
 	/**
@@ -149,26 +155,27 @@ class ItemsController extends Controller {
 		//
 		$item = Item::find($id);
         
-        if(Request::has('name')) {
+        if(Request::has('name') && Request::input('name') != "") {
             $item->name = Request::input('name');
         }
         
-        if(Request::has('description')) {
+        if(Request::has('description') && Request::input('description') != "") {
             $item->description = Request::input('description');
         }
         
-        if(Request::has('price')) {
+        if(Request::has('price') && Request::input('price') != "") {
             $item->price = Request::input('price');
         }
         
-        $item->active = isset($_POST['active']);
+        $item->active = (Request::has('active') &&
+            Request::input('active') == "true");
         
         if(Request::file('picture1')) {
             $destination = 'uploads';
             // Give it a unique filename
             $extension = Input::file('picture1')->getClientOriginalExtension();
             if(strtolower($extension) != 'jpg') {
-                return "Please upload only .jpg files.";
+                return Response::make("Please upload only .jpg files.", 400);
             } else {
                 $filename = $item->hash . "_1." . strtolower($extension);
             
@@ -177,7 +184,7 @@ class ItemsController extends Controller {
             }
         }
         
-        if(Request::has('dp2') && Request::input('dp2') ||
+        if(Request::has('dp2') && Request::input('dp2') == "true" ||
                 Request::file('picture2')) {
             File::delete('uploads/'.$item->hash.'_2.jpg');
             $item->picture2 = false;
@@ -188,7 +195,7 @@ class ItemsController extends Controller {
             // Give it a unique filename
             $extension = Input::file('picture2')->getClientOriginalExtension();
             if(strtolower($extension) != 'jpg') {
-                return "Please upload only .jpg files.";
+                return Response::make("Please upload only .jpg files.", 400);
             } else {
                 $filename = $item->hash . "_2." . strtolower($extension);
                 Input::file('picture2')->move($destination, $filename);
@@ -198,8 +205,7 @@ class ItemsController extends Controller {
         }
         
         $item->save();
-        
-        return Redirect::to('items/list');
+        return Response::make("Success", 205);
 	}
 
 	/**
@@ -212,20 +218,62 @@ class ItemsController extends Controller {
 	{
 		//
 		$item = Item::find($id);
-        File::delete('uploads/'.$item->name.'_1.jpg');
+        File::delete('uploads/'.$item->hash.'_1.jpg');
         if($item->picture2)
-            File::delete('uploads/'.$item->name.'_2.jpg');
+            File::delete('uploads/'.$item->hash.'_2.jpg');
 		$item->delete();
-		return Redirect::to('items');
+        return Response::make("Success", 205);
 	}
-
-    
-    /**
-     * Displays a table list of all items
-     */
-    public function listItems()
-    {
-        $items = Item::all();
-        return view('items.list')->with('items', $items);
-    }
+	
+	/**
+	 * Change the pictures of an item
+	 *
+	 * @param  int  $id
+	 * @param  File $picture1
+	 * @param  File $picture2
+	 * @param  bool $dp2
+	 * @return Response
+	 */
+	public function changePictures()
+	{
+	    $item = Item::find(Request::input('id'));
+	    
+	    // Delete the secondary picture first
+	    if(Request::has('dp2') && Request::input('dp2') == "true" ||
+                Request::file('picture2')) {
+            File::delete('uploads/'.$item->hash.'_2.jpg');
+            $item->picture2 = false;
+        }
+        
+        if(Request::file('picture1')) {
+            $destination = 'uploads';
+            // Give it a unique filename
+            $extension = Input::file('picture1')->getClientOriginalExtension();
+            if(strtolower($extension) != 'jpg') {
+                return Response::make("Please upload only .jpg files.", 400);
+            } else {
+                $filename = $item->hash . "_1." . strtolower($extension);
+            
+                File::delete('uploads/'.$item->hash.'_1.jpg');
+                Input::file('picture1')->move($destination, $filename);
+            }
+        }
+        
+        if(Request::file('picture2')) {
+            $destination = 'uploads';
+            // Give it a unique filename
+            $extension = Input::file('picture2')->getClientOriginalExtension();
+            if(strtolower($extension) != 'jpg') {
+                return Response::make("Please upload only .jpg files.", 400);
+            } else {
+                $filename = $item->hash . "_2." . strtolower($extension);
+                Input::file('picture2')->move($destination, $filename);
+            }
+            
+            $item->picture2 = true;
+        }
+        
+        $item->save();
+        return Response::make("Success", 205);
+	}
 }

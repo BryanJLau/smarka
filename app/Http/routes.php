@@ -20,8 +20,6 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
-// Add the admin panel for items
-Route::get('items/list', 'ItemsController@listItems');
 // Admin panel
 Route::get('admin', function() {
     return view('admin');
@@ -34,10 +32,11 @@ Route::post('admin', function() {
 Route::post('orders/all', 'OrdersController@payAll');
 
 Route::resource('items', 'ItemsController');
+Route::post('items/changePictures', 'ItemsController@changePictures');
 Route::resource('locations', 'LocationsController',
     array('only' => array('index', 'store', 'destroy')));
 Route::resource('notifications', 'NotificationsController',
     array('only' => array('index', 'store')));
 Route::resource('orders', 'OrdersController',
-    array('only' => array('index', 'create', 'store', 'update', 'payAll')));
+    array('only' => array('index', 'store', 'update', 'payAll')));
 

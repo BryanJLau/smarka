@@ -7,6 +7,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet">
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script>
 <script src="/js/admin.js"></script>
 <body ng-app="adminApp" ng-controller="AdminCtrl" ng-init="init()">
 <!--
@@ -103,7 +104,7 @@
 					<a href="#">Navigation</a>
 				</li>
 				<li class="enabled active">
-					<a href="#" role="button" ng-click="showLocations()">
+					<a href="#" role="button" ng-click="showItems()">
 					    Item List
 				    </a>
 				</li>
@@ -125,6 +126,9 @@
 			</ul>
 		</div>
 		<div class="col-md-6">
+		    <ng-include id="content-items" class="content"
+			    src="'/templates/itemsView.html'">
+			</ng-include>
 		    <ng-include id="content-locations" class="content hidden"
 			    src="'/templates/locationsView.html'">
 			</ng-include>
