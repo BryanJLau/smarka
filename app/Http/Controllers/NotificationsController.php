@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Redirect;
 //use Illuminate\Http\Request;
 
 class NotificationsController extends Controller {
+    // Middleware
+    public function __construct()
+    {
+        $this->middleware('admin.session', ['only' => ['store']]);
+    }
 
 	/**
 	 * Display a listing of the resource.

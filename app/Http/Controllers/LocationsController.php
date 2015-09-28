@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Redirect;
 
 class LocationsController extends Controller {
+    // Middleware
+    public function __construct()
+    {
+        $this->middleware('admin.session', ['only' => ['store', 'destroy']]);
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -41,7 +46,6 @@ class LocationsController extends Controller {
 	{
 		//
 		$location = new Location;
-            http_response_code(400);
         
         if(Request::has('location') && Request::input('location') != "") {
             $location->location = Request::input('location');

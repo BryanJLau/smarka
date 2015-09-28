@@ -384,7 +384,6 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
         $('#orders-pending-tab').addClass('active');
         
         $scope.orders.all = false;
-        $('.orderToggle').bootstrapToggle();
         
         $http.get("/orders")
             .success(function(response) {
@@ -401,7 +400,6 @@ adminApp.controller('AdminCtrl', function ($scope, $http, $timeout) {
         $('#orders-completed-tab').addClass('active');
         
         $scope.orders.all = true;
-        $('.orderToggle').bootstrapToggle();
         
         $http.get("/orders?all=true")
             .success(function(response) {

@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\File;
 use Input;  // For file uploads
 
 class ItemsController extends Controller {
+    // Middleware
+    public function __construct()
+    {
+        $this->middleware('admin.session',
+            ['only' => ['store', 'update', 'destroy', 'changePictures']]);
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -32,8 +38,7 @@ class ItemsController extends Controller {
 		    // Ordering should not happen between 9 PM Friday through Saturday
 		    if((date('l') == 'Friday' && date('G') >= 21) ||
 		        date('l') == 'Saturday') {
-		        http_response_code(503);    // Service Unavailable
-		        return response()->json([]);
+                return Response::make("[]", 503);   // Service Unavailable
             }
 		    else {
 		        $items = Item::where('active', 1)->get();

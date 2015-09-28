@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\File;
 
 class OrdersController extends Controller {
+    // Middleware
+    public function __construct()
+    {
+        $this->middleware('admin.session', ['only' => ['index', 'update', 'payAll']]);
+    }
 
 	/**
 	 * Display a listing of the resource.

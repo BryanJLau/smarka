@@ -20,23 +20,20 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
-// Admin panel
-Route::get('admin', function() {
-    return view('admin');
-});
-Route::post('admin', function() {
-    return view('admin');
-});
+Route::controller('admin', 'AdminController');
 
-// Pay all orders
-Route::post('orders/all', 'OrdersController@payAll');
-
-Route::resource('items', 'ItemsController');
+Route::resource('items', 'ItemsController',
+    array('only' => array('index', 'store', 'update', 'destroy',
+            'changePictures')));
 Route::post('items/changePictures', 'ItemsController@changePictures');
+
 Route::resource('locations', 'LocationsController',
     array('only' => array('index', 'store', 'destroy')));
+    
 Route::resource('notifications', 'NotificationsController',
     array('only' => array('index', 'store')));
+    
 Route::resource('orders', 'OrdersController',
     array('only' => array('index', 'store', 'update', 'payAll')));
+Route::post('orders/all', 'OrdersController@payAll');
 
