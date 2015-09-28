@@ -86,6 +86,13 @@ class OrdersController extends Controller {
 	public function store()
 	{
 		//
+		date_default_timezone_set("America/Los_Angeles");
+	    // Ordering should not happen between 9 PM Friday through Saturday
+	    if((date('l') == 'Friday' && date('G') >= 21) ||
+	        date('l') == 'Saturday') {
+            return Response::make("[]", 503);   // Service Unavailable
+        }
+		
         $emailData = array();
 		$order = new Order;
         

@@ -29,7 +29,10 @@ class ItemsController extends Controller {
 	public function index()
 	{
 		//
-		if(isset($_GET['all'])) {
+		if(isset($_GET['all']) &&
+		        // Do not allow all except for administrators
+		        session('password') == getenv('MAIL_PASSWORD') &&
+	            session('email') == getenv('MAIL_USERNAME')) {
             $items = Item::all();
             return response()->json($items);
 		}
