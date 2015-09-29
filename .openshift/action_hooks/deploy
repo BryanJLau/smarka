@@ -90,3 +90,10 @@ echo 1>&2
 pushd ${OPENSHIFT_REPO_DIR} > /dev/null
 php artisan migrate --force
 popd > /dev/null
+
+# Symlink the data folder to the uploads folder
+if [ ! -d $OPENSHIFT_DATA_DIR/uploads ]; then
+    mkdir $OPENSHIFT_DATA_DIR/uploads
+fi
+ 
+ln -sf $OPENSHIFT_DATA_DIR/uploads $OPENSHIFT_REPO_DIR/public/uploads

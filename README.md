@@ -27,6 +27,11 @@ SQL attacks can be performed.
 This server was meant for non-tech-savvy people, so the admin panel is made 
 as simple as possible, at the cost of some extensibility.
 
+Uploaded files will be located in the ``` /public/uploads ``` folder, and can 
+be accessed in the url as ``` http://www.example.com/uploads ```. The OpenShift 
+hook has already been configured to link the ``` $OPENSHIFT_DATA_DIR ``` 
+environment variable to that folder.
+
 ## Deployment ##
 For local deployment, copying the .env.example file into a .env file and 
 modifying it is acceptable. The MAIL\_USERNAME and MAIL\_PASSWORD will double as 
