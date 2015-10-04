@@ -170,7 +170,7 @@
 				        ng-src="{{ item.picture1Path }}"><br>
 			        <div class='alert alert-info'>
 					    <p>Description:</p>
-					    <p class="lead">{{ item.description }}</p>
+					    <pre class="lead">{{ item.description }}</pre>
 				    </div>
 				    <div class='alert alert-warning'>
 					    <p>Price:</p>
