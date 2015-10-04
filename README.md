@@ -146,9 +146,13 @@ Returns:
 ### Get locations list ###
 ``` GET /locations ```
 
+This call does not require administrator authentication.
+
 Returns:
 
-* ``` JSONArray ``` : Contains all the locations for pickup
+* ``` JSONArray ``` : Contains all the locations for pickup with properties of 
+``` id ``` (for testing purposes) and ``` location ``` for the location text.
+
 
 ### Create location ###
 ``` POST /locations ```
@@ -175,7 +179,8 @@ Returns:
 
 Returns:
 
-* ``` String ``` : Latest notification (or nothing if no notifications were set)
+* ``` id ``` : ID of the notification (for testing purposes)
+* ``` text ``` : Latest notification (or nothing if no notifications were set)
 
 ### Create location ###
 ``` POST /notifications ```
