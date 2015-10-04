@@ -15,13 +15,6 @@ Route::get('/', function () {
     return View::make('index');
 });
 
-Route::get('home', 'HomeController@index');
-
-Route::controllers([
-	'auth' => 'Auth\AuthController',
-	'password' => 'Auth\PasswordController',
-]);
-
 Route::controller('admin', 'AdminController');
 
 Route::resource('items', 'ItemsController',
