@@ -100,16 +100,15 @@ class OrdersController extends Controller {
             $order->name = Request::input('name');
             $emailData['name'] = $order->name;
         } else {
-            http_response_code(400);    // Bad request
-            return "Please provide a name.";
+            return Response::make("Please provide a name.", 400);
         }
         
         if(Request::has('phone')) {
             $order->phone = Request::input('phone');
             $emailData['phone'] = $order->phone;
         } else {
-            http_response_code(400);    // Bad request
-            return "Please provide a phone number that has texting.";
+            return Response::make("Please provide a phone number that has \
+                texting.", 400);
         }
         
         if(Request::has('notes')) {
@@ -124,8 +123,7 @@ class OrdersController extends Controller {
             $order->location = Request::input('location');
             $emailData['location'] = $order->location;
         } else {
-            http_response_code(400);    // Bad request
-            return "Please provide a location.";
+            return Response::make("Please provide a location.", 400);
         }
         
         if(Request::has('email')) {
@@ -166,8 +164,7 @@ class OrdersController extends Controller {
                 return Request::input('item_array');
             }
         } else {
-            http_response_code(400);    // Bad request
-            return "Please provide items to buy.";
+            return Response::make("Please provide items to buy.", 400);
         }
         
         $order->save();
