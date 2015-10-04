@@ -147,7 +147,7 @@
 				    try to bring exact change at the time of pickup.
 				</p>
 				<p>
-					<a class="btn btn-primary btn-large" href="#" ng-click="showCheckoutModal()">Learn more</a>
+					<a class="btn btn-primary btn-large" href="#" ng-click="showCheckoutModal()">Checkout Cart</a>
 				</p>
 			</div>
 			<div class="page-header">
@@ -170,11 +170,11 @@
 				        ng-src="{{ item.picture1Path }}"><br>
 			        <div class='alert alert-info'>
 					    <p>Description:</p>
-					    <p><small>{{ item.description }}</small></p>
+					    <p class="lead">{{ item.description }}</p>
 				    </div>
 				    <div class='alert alert-warning'>
 					    <p>Price:</p>
-					    <p><small>${{ item.price }}</small></p>
+					    <p class="lead">${{ item.price }}</p>
 				    </div>
 				</div>
 				<div class="panel-footer">
